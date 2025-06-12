@@ -1,6 +1,7 @@
 # 📋 Configuration du nouvel environnement
 
 ## 🔧 1. Outils de base
+
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install git curl build-essential zsh autojump fzf tilix tree htop -y
@@ -12,6 +13,7 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$
 ```
 
 ## 📁 2. Configuration SSH
+
 ```bash
 # Créer dossier SSH avec bonnes permissions
 mkdir -p ~/.ssh
@@ -25,6 +27,7 @@ chmod 700 ~/.ssh
 ```
 
 ## 🔗 3. Dotfiles
+
 ```bash
 git clone git@github.com:GautierDeMo/dotfiles.git ~/dotfiles
 cd ~/dotfiles
@@ -34,12 +37,14 @@ chmod +x install.sh git_setup.sh
 ```
 
 ## 🖥️ 4. VS Code + Extensions
+
 ```bash
 chmod +x install_vscode_and_extensions.sh
 ./install_vscode_and_extensions.sh
 ```
 
 ## 🐍 5. Environnements dev
+
 ```bash
 # PHP + Composer
 sudo apt install php php-cli php-mbstring php-xml php-curl php-zip unzip -y
@@ -59,6 +64,7 @@ echo "⚠️  LOGOUT/LOGIN requis pour permissions Docker"
 ```
 
 ## 🎨 6. Polices et finalisation
+
 ```bash
 # Installation des polices Nerd Fonts (nécessaires pour Powerlevel10k)
 wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Meslo.zip
@@ -70,6 +76,7 @@ sudo snap install phpstorm --classic
 ```
 
 ## ✅ 7. Vérifications
+
 ```bash
 # Test des commandes
 which git && echo "✅ Git OK"
