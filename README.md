@@ -1,5 +1,3 @@
-# Un repo ayant pour but de faciliter ma mise en route sur un poste
-
 # 📋 Configuration nouvel environnement
 
 ## 🔧 1. Outils de base
