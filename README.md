@@ -1,4 +1,4 @@
-# 📋 Configuration nouvel environnement
+# 📋 Configuration du nouvel environnement
 
 ## 🔧 1. Outils de base
 ```bash
