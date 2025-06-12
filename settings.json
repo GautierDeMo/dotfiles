@@ -126,5 +126,9 @@
       "\"files.associations\"": "{ \"*.module\": \"php\" }"
     },
     "sqltools.useNodeRuntime": true,
-    "editor.parameterHints.enabled": false
+    "editor.parameterHints.enabled": false,
+    "workbench.editor.autoLockGroups": {
+      "mainThreadWebview-markdown.preview": true
+    },
+    "github.copilot.chat.codesearch.enabled": true
 }
