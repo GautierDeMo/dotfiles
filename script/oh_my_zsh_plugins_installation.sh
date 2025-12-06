@@ -17,7 +17,7 @@ echo ""
 # Plugins installation logic when package manager is needed
 # ===================================================================
 
-# MacOS case :
+# MacOS case:
 if [ "$DETECTED_OS" == "macOS" ]; then
     echo "🍎 Vérification d'autojump et fzf via Homebrew..."
     echo ""
@@ -44,7 +44,7 @@ if [ "$DETECTED_OS" == "macOS" ]; then
         echo ""
     fi
 
-
+#  Linux case:
 elif [ "$DETECTED_OS" == "Linux" ]; then
     echo "🐧 Installation d'autojump et fzf via $DETECTED_PM..."
     echo ""
