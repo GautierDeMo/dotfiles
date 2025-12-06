@@ -20,20 +20,9 @@ detect_os_and_manager() {
             package_manager="apt for Debian, Ubuntu, Pop!_OS, Mint"
         elif command -v dnf &> /dev/null; then
             package_manager="dnf for Fedora, RHEL, CentOS 8+"
-        elif command -v pacman &> /dev/null; then
-            package_manager="pacman for Arch Linux, Manjaro"
-        elif command -v yum &> /dev/null; then
-            package_manager="yum for Vieux CentOS/RHEL"
-        elif command -v zypper &> /dev/null; then
-            package_manager="zypper for OpenSUSE"
-        elif command -v apk &> /dev/null; then
-            package_manager="apk for Alpine Linux"
         else
             package_manager="unknown"
         fi
-    elif [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
-        os_name="Windows"
-        package_manager="winget/choco"
     else
         os_name="Unknown"
         package_manager="unknown"

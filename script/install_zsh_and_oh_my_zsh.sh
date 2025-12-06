@@ -43,12 +43,6 @@ elif [ "$DETECTED_OS" == "Linux" ]; then
         dnf)
             sudo dnf install -y zsh curl
             ;;
-        pacman)
-            sudo pacman -S --noconfirm zsh curl
-            ;;
-        apk)
-            apk add zsh curl
-            ;;
         *)
             echo "❌ Gestionnaire de paquets non supporté pour l'installation auto."
             exit 1
