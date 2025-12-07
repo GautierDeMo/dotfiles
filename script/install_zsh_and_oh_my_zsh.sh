@@ -6,8 +6,6 @@ set -e
 source "$(dirname "$0")/detect_os_and_package_manager.sh"
 detect_os_and_manager
 
-echo ""
-echo "======================================================================"
 # shellcheck disable=SC2153
 echo "🔧 Configuration pour : $DETECTED_OS avec $DETECTED_PM"
 echo "======================================================================"
@@ -62,7 +60,7 @@ elif [ "$DETECTED_OS" == "Linux" ]; then
             exit 1
             ;;
     esac
-    echo "✅ Zsh et Curl installés."
+    echo "✅ Zsh et Curl bien/déjà installés."
     echo ""
 fi
 

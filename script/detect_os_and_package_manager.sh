@@ -44,9 +44,7 @@ detect_os_and_manager() {
     fi
 
     echo ""
-    echo "Résumé : OS=$os_name | PM=$package_manager"
     echo "======================================================================"
-    echo ""
 
     # Variables exportation needed for global script
     export DETECTED_OS="$os_name"

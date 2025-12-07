@@ -3,12 +3,11 @@ set -e
 
 # Function from 'detect os and package manager' script
 # shellcheck disable=SC1091
+source "$(dirname "$0")/common.sh"
+# shellcheck disable=SC1091
 source "$(dirname "$0")/detect_os_and_package_manager.sh"
 detect_os_and_manager
 
-echo ""
-echo "======================================================================"
-# shellcheck disable=SC2153
 echo "🔧 Configuration pour : $DETECTED_OS avec $DETECTED_PM"
 echo "======================================================================"
 echo ""
@@ -89,32 +88,6 @@ fi
 
 echo "📁 Répertoire des plugins : $ZSH_CUSTOM/plugins"
 echo ""
-
-# Clones a Zsh plugin from a given Git repository.
-# It checks if the plugin directory already exists before cloning.
-#
-# @param $1 The URL of the Git repository to clone.
-# @param $2 The destination path where the plugin should be cloned.
-clone_plugin() {
-  local repo=$1
-  local name=$2
-  local dir="$ZSH_CUSTOM/plugins/$name"
-
-  if [ ! -d "$dir" ]; then
-    echo "📥 Installation de $name..."
-    if git clone "$repo" "$dir"; then
-      echo "✅ $name installé."
-      echo ""
-    else
-      echo "❌ Erreur lors de l'installation de $name."
-      echo ""
-      return 1
-    fi
-  else
-    echo "✅ $name déjà installé."
-    echo ""
-  fi
-}
 
 # ===================================================================
 # Oh My Zsh plugins installation
