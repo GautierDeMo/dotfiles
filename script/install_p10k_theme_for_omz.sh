@@ -1,125 +1,143 @@
 #!/bin/bash
 set -e
 
-# Function from 'detect os and package manager' script
+# Import common functions
 # shellcheck disable=SC1091
 source "$(dirname "$0")/common.sh"
 # shellcheck disable=SC1091
 source "$(dirname "$0")/detect_os_and_package_manager.sh"
 detect_os_and_manager
 
-echo "🔧 Configuration pour : $DETECTED_OS avec $DETECTED_PM"
+echo "🔧 Setup for: $DETECTED_OS with $DETECTED_PM"
 echo "======================================================================"
 echo ""
 
-P10K_README_FONTS_PART='https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#manual-font-installation'
-P10K_README_THEME_PART='https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#oh-my-zsh'
-P10K_README_CONF_PART='https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#for-new-users'
+# ===================================================================
+# Constants
+# ===================================================================
+
+P10K_README_FONTS='https://github.com/romkatv/powerlevel10k#fonts'
+P10K_README_THEME='https://github.com/romkatv/powerlevel10k#oh-my-zsh'
+P10K_README_CONFIG='https://github.com/romkatv/powerlevel10k#configuration'
+
+# ===================================================================
+# Meslo Nerd Font installation
+# ===================================================================
 
 echo "======================================================================"
-echo "🔤 Installation des polices pour P10K"
+echo "🔤 Installing fonts for Powerlevel10k"
 echo "======================================================================"
 echo ""
 
-# MacOS case: Nerd Fonts installation
 if [ "$DETECTED_OS" == "macOS" ]; then
-    echo "🍎 Vérification de la police MesloLGS NF via Homebrew..."
+    echo "🍎 Checking MesloLGS NF font via Homebrew..."
     echo ""
 
-    # MesloLGS NF police
     if ! brew list font-meslo-lg-nerd-font &> /dev/null; then
-        echo "📦 Installation de la police..."
+        echo "📦 Installing font..."
         brew install font-meslo-lg-nerd-font
-        echo "✅ police installé."
-        echo "⚠️ Allez changer la police de votre terminal, ainsi que celle de votre IDE. ⚠️"
-        echo "Voici le lien du README vous indiquant comment faire : $P10K_README_FONTS_PART"
+        echo "✅ Font installed."
         echo ""
     else
-        echo "✅ police déjà installé."
-        echo "⚠️ Vérifiez que vous avez changé la police de votre terminal, ainsi que celle de votre IDE. ⚠️"
-        echo "Voici le lien du README vous indiquant comment faire : $P10K_README_FONTS_PART"
+        echo "✅ Font already installed."
         echo ""
     fi
 
-# Linux case: Nerd Fonts installation
+    echo "⚠️  Change the font in your terminal and IDE:"
+    echo "📖 Guide: $P10K_README_FONTS"
+    echo ""
+
 elif [ "$DETECTED_OS" == "Linux" ]; then
-    echo "🐧 Installation de la police MesloLGS NF..."
+    echo "🐧 Installing MesloLGS NF font..."
     echo ""
 
     FONT_DIR="$HOME/.local/share/fonts"
     TMP_DIR=$(mktemp -d)
     ARCHIVE="$TMP_DIR/Meslo.tar.xz"
 
-    echo "📥 Téléchargement de Meslo Nerd Font..."
-    curl -fL -o "$TMP_DIR" https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.tar.xz
-    echo "✅ Archive téléchargée."
+    echo "📥 Downloading Meslo Nerd Font..."
+    curl -fL --proto '=https' --tlsv1.2 \
+      -o "$ARCHIVE" \
+      "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.tar.xz"
+    echo "✅ Archive downloaded."
     echo ""
 
-    echo "📦 Extraction des polices MesloLGS NF..."
+    echo "📦 Extracting MesloLGS NF fonts..."
     mkdir -p "$FONT_DIR"
     tar -xJf "$ARCHIVE" -C "$TMP_DIR"
 
-    # Only copy MesloLGS NF fonts
+    # Copy only MesloLGS NF fonts
     find "$TMP_DIR" -name "MesloLGSNerdFont-*.ttf" -exec cp {} "$FONT_DIR/" \;
-    echo "✅ Polices copiées dans $FONT_DIR"
+    echo "✅ Fonts copied to $FONT_DIR"
     echo ""
 
-    echo "🔄 Mise à jour du cache des polices..."
+    echo "🔄 Updating font cache..."
     fc-cache -fv
-    echo "✅ Cache des polices mis à jour."
+    echo "✅ Font cache updated."
     echo ""
 
     # Verification
     if fc-list | grep -qi "MesloLGS"; then
-        echo "✅ Police MesloLGS NF correctement installée et détectée."
+        echo "✅ MesloLGS NF font correctly installed."
     else
-        echo "⚠️  Police installée mais non détectée par fc-cache. Redémarrez votre terminal."
+        echo "⚠️  Font installed but not detected. Restart your terminal."
     fi
     echo ""
 
-    # Cleaning
+    # Cleanup
     rm -rf "$TMP_DIR"
-    echo "🗑️  Dossier temporaire nettoyé."
+    echo "🗑️  Temporary directory cleaned."
     echo ""
 
-    echo "⚠️  N'oubliez pas de changer la police de votre terminal et IDE."
-    echo "📖 Guide : $P10K_README_FONTS_PART"
+    echo "⚠️  Change the font in your terminal and IDE:"
+    echo "📖 Guide: $P10K_README_FONTS"
     echo ""
 fi
 
+# ===================================================================
+# Oh My Zsh environment verification
+# ===================================================================
+
 echo "----------------------------------------------------------------------"
-echo "🔍 Vérification de l'environnement Oh My Zsh..."
+echo "🔍 Checking Oh My Zsh environment"
 echo "----------------------------------------------------------------------"
 echo ""
 
 ZSH_CUSTOM=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}
 if [ ! -d "$ZSH_CUSTOM" ]; then
-  echo "❌ Oh My Zsh n'est pas installé ($ZSH_CUSTOM introuvable)."
-  echo "   Installez Oh My Zsh avant d'exécuter la suite de ce script."
+  echo "❌ Oh My Zsh is not installed ($ZSH_CUSTOM not found)."
+  echo "   Install Oh My Zsh before running this script."
   echo ""
   exit 1
 fi
 
-echo "📁 Répertoire des thèmes : $ZSH_CUSTOM/themes"
+echo "📁 Themes directory: $ZSH_CUSTOM/themes"
 echo ""
 
+# ===================================================================
+# Powerlevel10k theme installation
+# ===================================================================
+
 echo "======================================================================"
-echo "🎨 Installation du thème P10K"
+echo "🎨 Installing Powerlevel10k theme"
 echo "======================================================================"
 echo ""
 
-# 'P10K' theme installation by cloning its git repo
 clone_theme \
   "https://github.com/romkatv/powerlevel10k.git" \
   "powerlevel10k"
 
-echo "⚠️ Ouvrez votre fichier '~/.zshrc', trouvez la ligne qui définit le thème \
-et changez sa valeur à 'powerlevel10k/powerlevel10k'"
-echo "📖 Guide au cas où : $P10K_README_THEME_PART"
+echo "======================================================================"
+echo "🎉 Powerlevel10k theme installed!"
+echo "======================================================================"
 echo ""
-
-echo "Après avoir lancé la commande : 'exec zsh' ou bien 'source ~/.zshrc' pour \
-mettre à jour votre conf. ZSH, lors du premier run avec le thème P10K, vous \
-passerez par le 'configuration wizard'."
-echo "📖 Plus de détails au besoin ici : $P10K_README_CONF_PART"
+echo "📝 Next steps:"
+echo "  1. Change the theme in your ~/.zshrc:"
+echo "     ZSH_THEME=\"powerlevel10k/powerlevel10k\""
+echo "  2. Restart your terminal: exec zsh"
+echo "  3. Follow the Powerlevel10k configuration wizard"
+echo ""
+echo "📖 Guides:"
+echo "   Theme: $P10K_README_THEME"
+echo "   Config: $P10K_README_CONFIG"
 echo ""

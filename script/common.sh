@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# filepath: /Users/gautierdemauroy/code/GautierDeMo/dotfiles/script/common.sh
-
 # Clones a Git repository into a destination directory.
-# It checks if the directory already exists before cloning.
+# Checks if the directory already exists before cloning.
 #
 # @param $1 The URL of the Git repository to clone.
 # @param $2 The name/identifier of the repository (for logging).
@@ -14,23 +12,23 @@ clone_repo() {
   local dir=$3
 
   if [ ! -d "$dir" ]; then
-    echo "📥 Installation de $name..."
+    echo "📥 Installing $name..."
     if git clone "$repo" "$dir"; then
-      echo "✅ $name installé."
+      echo "✅ $name installed."
       echo ""
     else
-      echo "❌ Erreur lors de l'installation de $name."
+      echo "❌ Error while installing $name."
       echo ""
       return 1
     fi
   else
-    echo "✅ $name déjà installé."
+    echo "✅ $name already installed."
     echo ""
   fi
 }
 
 # Clones a Zsh plugin from a given Git repository.
-# It checks if the plugin directory already exists before cloning.
+# Checks if the plugin directory already exists before cloning.
 #
 # @param $1 The URL of the Git repository to clone.
 # @param $2 The name of the plugin (used as directory name).
@@ -43,7 +41,7 @@ clone_plugin() {
 }
 
 # Clones a Zsh theme from a given Git repository.
-# It checks if the theme directory already exists before cloning.
+# Checks if the theme directory already exists before cloning.
 #
 # @param $1 The URL of the Git repository to clone.
 # @param $2 The name of the theme (used as directory name).

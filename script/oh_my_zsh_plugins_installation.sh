@@ -1,68 +1,66 @@
 #!/bin/bash
 set -e
 
-# Function from 'detect os and package manager' script
+# Import common functions
 # shellcheck disable=SC1091
 source "$(dirname "$0")/common.sh"
 # shellcheck disable=SC1091
 source "$(dirname "$0")/detect_os_and_package_manager.sh"
 detect_os_and_manager
 
-echo "🔧 Configuration pour : $DETECTED_OS avec $DETECTED_PM"
+echo "🔧 Setup for: $DETECTED_OS with $DETECTED_PM"
 echo "======================================================================"
 echo ""
 
 # ===================================================================
-# Plugins installation logic when package manager is needed
+# System dependencies installation
 # ===================================================================
 
-# MacOS case:
 if [ "$DETECTED_OS" == "macOS" ]; then
-    echo "🍎 Vérification d'autojump et fzf via Homebrew..."
+    echo "🍎 Checking autojump and fzf via Homebrew..."
     echo ""
 
     # Autojump
     if ! brew list autojump &> /dev/null; then
-        echo "📦 Installation d'autojump..."
+        echo "📦 Installing autojump..."
         brew install autojump
-        echo "✅ autojump installé."
+        echo "✅ autojump installed."
         echo ""
     else
-        echo "✅ autojump déjà installé."
+        echo "✅ autojump already installed."
         echo ""
     fi
 
     # FZF
     if ! brew list fzf &> /dev/null; then
-        echo "🔍 Installation de fzf..."
+        echo "🔍 Installing fzf..."
         brew install fzf
-        echo "✅ fzf installé."
+        echo "✅ fzf installed."
         echo ""
     else
-        echo "✅ fzf déjà installé."
+        echo "✅ fzf already installed."
         echo ""
     fi
 
-#  Linux case:
 elif [ "$DETECTED_OS" == "Linux" ]; then
-    echo "🐧 Installation d'autojump et fzf via $DETECTED_PM..."
+    echo "🐧 Installing autojump and fzf via $DETECTED_PM..."
     echo ""
 
     case $DETECTED_PM in
         apt)
             sudo apt update && sudo apt install -y autojump fzf
             echo ""
-            echo "✅ autojump et fzf installés."
+            echo "✅ autojump and fzf installed."
             echo ""
             ;;
         dnf)
             sudo dnf install -y autojump-zsh fzf
             echo ""
-            echo "✅ autojump et fzf installés."
+            echo "✅ autojump and fzf installed."
             echo ""
             ;;
         *)
-            echo "❌ Gestionnaire de paquets non supporté pour l'installation auto."
+            echo "❌ Package manager not supported for auto-install."
             echo ""
             exit 1
             ;;
@@ -70,23 +68,23 @@ elif [ "$DETECTED_OS" == "Linux" ]; then
 fi
 
 # ===================================================================
-# setting the var if needed
+# Oh My Zsh environment verification
 # ===================================================================
 
 echo "----------------------------------------------------------------------"
-echo "🔍 Vérification de l'environnement Oh My Zsh..."
+echo "🔍 Checking Oh My Zsh environment"
 echo "----------------------------------------------------------------------"
 echo ""
 
 ZSH_CUSTOM=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}
 if [ ! -d "$ZSH_CUSTOM" ]; then
-  echo "❌ Oh My Zsh n'est pas installé ($ZSH_CUSTOM introuvable)."
-  echo "   Installez Oh My Zsh avant d'exécuter la suite de ce script."
+  echo "❌ Oh My Zsh is not installed ($ZSH_CUSTOM not found)."
+  echo "   Install Oh My Zsh before running this script."
   echo ""
   exit 1
 fi
 
-echo "📁 Répertoire des plugins : $ZSH_CUSTOM/plugins"
+echo "📁 Plugins directory: $ZSH_CUSTOM/plugins"
 echo ""
 
 # ===================================================================
@@ -94,26 +92,26 @@ echo ""
 # ===================================================================
 
 echo "======================================================================"
-echo "🧩 Installation des plugins Oh My Zsh personnalisés"
+echo "🧩 Installing custom Oh My Zsh plugins"
 echo "======================================================================"
 echo ""
 
-# 'zsh-autosuggestions' plugin installation by cloning its git repo
+# zsh-autosuggestions plugin
 clone_plugin \
   "https://github.com/zsh-users/zsh-autosuggestions" \
   "zsh-autosuggestions"
 
-# 'fast-syntax-highlighting' plugin installation by cloning its git repo
+# fast-syntax-highlighting plugin
 clone_plugin \
   "https://github.com/zdharma-continuum/fast-syntax-highlighting" \
   "fast-syntax-highlighting"
 
-# 'you-should-use' plugin installation by cloning its git repo
+# you-should-use plugin
 clone_plugin \
   "https://github.com/MichaelAquilina/zsh-you-should-use" \
   "you-should-use"
 
 echo "======================================================================"
-echo "🎉 Installation des plugins terminée !"
+echo "🎉 Plugins installation complete!"
 echo "======================================================================"
 echo ""

@@ -6,7 +6,7 @@ detect_os_and_manager() {
 
     echo ""
     echo "======================================================================"
-    echo "🔍 Détection de l'OS et du gestionnaire de paquets"
+    echo "🔍 Detecting OS and package manager"
     echo "======================================================================"
     echo ""
 
@@ -15,43 +15,43 @@ detect_os_and_manager() {
         os_name="macOS"
         if command -v brew &> /dev/null; then
             package_manager="brew"
-            echo "🍎 OS détecté : macOS"
-            echo "✅ Gestionnaire : Homebrew"
+            echo "🍎 OS detected: macOS"
+            echo "✅ Package manager: Homebrew"
         else
-            package_manager="unknown (brew not installed)"
-            echo "🍎 OS détecté : macOS"
-            echo "⚠️  Homebrew non détecté"
+            package_manager="unknown"
+            echo "🍎 OS detected: macOS"
+            echo "⚠️  Homebrew not detected"
         fi
     elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
         os_name="Linux"
-        echo "🐧 OS détecté : Linux"
+        echo "🐧 OS detected: Linux"
 
-        # Package Manager detection on Linux
+        # Package manager detection on Linux
         if command -v apt &> /dev/null; then
-            package_manager="apt for Debian, Ubuntu, Pop!_OS, Mint"
-            echo "✅ Gestionnaire : apt"
+            package_manager="apt"
+            echo "✅ Package manager: apt (Debian/Ubuntu)"
         elif command -v dnf &> /dev/null; then
-            package_manager="dnf for Fedora, RHEL, CentOS 8+"
-            echo "✅ Gestionnaire : dnf"
+            package_manager="dnf"
+            echo "✅ Package manager: dnf (Fedora/RHEL)"
         else
             package_manager="unknown"
-            echo "⚠️  Gestionnaire non détecté"
+            echo "⚠️  Package manager not detected"
         fi
     else
         os_name="Unknown"
         package_manager="unknown"
-        echo "❌ OS non supporté ou non détecté"
+        echo "❌ OS not supported or not detected"
     fi
 
     echo ""
     echo "======================================================================"
 
-    # Variables exportation needed for global script
+    # Export variables for other scripts
     export DETECTED_OS="$os_name"
     export DETECTED_PM="$package_manager"
 }
 
-# If the script is called alone, we call the function
+# If the script is called directly, execute the function
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     detect_os_and_manager
 fi
