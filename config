@@ -1,4 +1,15 @@
-Host *
-  UseKeychain yes
+# GitHub configuration
+Host github.com
   AddKeysToAgent yes
-  IdentityFile ~/.ssh/github_ssh_key
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_macM4
+
+# GitLab configuration
+Host gitlab.com
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_macM4
+
+Host *
+  AddKeysToAgent yes
+  UseKeychain yes

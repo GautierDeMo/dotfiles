@@ -52,6 +52,7 @@
   autocorrect = 1
 
 [push]
+  autoSetupRemote = true
   default = simple
 
 [branch "master"]
@@ -63,5 +64,10 @@
 [init]
   defaultBranch = master
 [user]
-	email = gautier@de-mauroy.fr
+	email = 89637837+GautierDeMo@users.noreply.github.com
 	name = Gautier de MAUROY
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
