@@ -11,7 +11,7 @@ detect_os_and_manager() {
     echo ""
 
     # OS detection
-    if [[ "$OSTYPE" == "darwin"* ]]; then
+    if [[ $(uname -s) == "Darwin"* ]]; then
         os_name="macOS"
         if command -v brew &> /dev/null; then
             package_manager="brew"
@@ -22,7 +22,7 @@ detect_os_and_manager() {
             echo "🍎 OS detected: macOS"
             echo "⚠️  Homebrew not detected"
         fi
-    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    elif [[ $(uname -s) == "Linux"* ]]; then
         os_name="Linux"
         echo "🐧 OS detected: Linux"
 
