@@ -23,7 +23,7 @@ fi
 SSH_KEY_BASE_NAME="id_$name"
 SSH_KEY_PATH="$SSH_DIR/$SSH_KEY_BASE_NAME"
 TARGET_SSH_CONFIG_FILE="$SSH_DIR/config"
-DOTFILES_SSH_CONFIG_DIR="/home/gdemauroy/Workspace/Private/dotfiles/ssh"
+DOTFILES_SSH_CONFIG_DIR="../ssh"
 
 # Create .ssh directory if it doesn't exist
 mkdir -p "$SSH_DIR"
@@ -37,9 +37,9 @@ else
     echo ""
     echo "📝 Generating new SSH key '$SSH_KEY_BASE_NAME'..."
     echo ""
-    read -rp "Enter your email for the key: " email
+    read -rp "Enter a comment to identify the key: " comment
     echo ""
-    ssh-keygen -t ed25519 -C "$email" -f "$SSH_KEY_PATH" -q
+    ssh-keygen -t ed25519 -C "$comment" -f "$SSH_KEY_PATH" -q
     echo ""
     echo "✅ SSH key generated."
     echo ""
@@ -56,29 +56,6 @@ if [ "$DETECTED_OS" == "macOS" ]; then
 elif [ "$DETECTED_OS" == "Linux" ]; then
     echo "OS detected: Linux. Using Linux configuration template."
     CONFIG_TEMPLATE_PATH="$DOTFILES_SSH_CONFIG_DIR/config_linux"
-
-    # Check and install keychain if not present
-    if ! command -v keychain &> /dev/null; then
-        echo "📝 Keychain not found. Installing keychain..."
-        case "$DETECTED_PM" in
-            apt)
-                sudo apt update && sudo apt install -y keychain
-                ;;
-            dnf)
-                sudo dnf install -y keychain
-                ;;
-            *)
-                echo "⚠️  Unsupported package manager '$DETECTED_PM' for auto-installing keychain. Please install it manually."
-                ;;
-        esac
-        if command -v keychain &> /dev/null; then
-            echo "✅ Keychain installed."
-        else
-            echo "❌ Failed to install keychain. Please install it manually."
-        fi
-    else
-        echo "✅ Keychain is already installed."
-    fi
 else
     echo "Unsupported OS for automatic SSH config file generation: $DETECTED_OS."
     echo "Please configure your ~/.ssh/config manually."
@@ -111,10 +88,10 @@ if [ -f "$CONFIG_TEMPLATE_PATH" ]; then
             echo "Create or update your $TARGET_SSH_CONFIG_FILE with the following entry:"
             echo "   Host github.com"
             echo "     AddKeysToAgent yes"
+            echo "     IdentityFile $SSH_KEY_PATH"
             if [ "$DETECTED_OS" == "Darwin" ]; then
                 echo "     UseKeychain yes"
             fi
-            echo "     IdentityFile $SSH_KEY_PATH"
             echo ""
         fi
     else
@@ -129,10 +106,10 @@ else
     echo "Please manually create or update your ~/.ssh/config with the following entry:"
     echo "   Host github.com"
     echo "     AddKeysToAgent yes"
+    echo "     IdentityFile $SSH_KEY_PATH"
     if [ "$DETECTED_OS" == "Darwin" ]; then
         echo "     UseKeychain yes"
     fi
-    echo "     IdentityFile $SSH_KEY_PATH"
     echo ""
 fi
 
@@ -140,70 +117,28 @@ fi
 # Final instructions
 # ======================================================================
 
-# Display public key
-echo "📋 Your public key (copy this to GitHub/GitLab):"
+echo "📋 Here is your public key (copy this to GitHub/GitLab/...):"
 echo "======================================================================"
 cat "$SSH_KEY_PATH.pub"
 echo "======================================================================"
+
+echo ""
+echo "Go add your key to GitHub and GitLab !"
 echo ""
 
-# Add key to ssh-agent/keychain automatically on macOS
-if [ "$DETECTED_OS" == "macOS" ]; then
-    echo "📝 Attempting to add SSH key to macOS Keychain..."
-    # Check if the key is already loaded in ssh-agent
-    if ssh-add -l | grep -q "$(basename "$SSH_KEY_PATH")"; then
-        echo "✅ Key '$SSH_KEY_BASE_NAME' is already loaded in ssh-agent."
-    else
-        echo "Adding key '$SSH_KEY_BASE_NAME' to ssh-agent and saving to Keychain..."
-        if ssh-add --apple-use-keychain "$SSH_KEY_PATH"; then
-            echo "✅ Key added to ssh-agent and saved to Keychain."
-        else
-            echo "⚠️ Failed to add key to ssh-agent/Keychain. You might need to do it manually."
-            echo "   Run: ssh-add --apple-use-keychain \"$SSH_KEY_PATH\""
-        fi
-    fi
-    echo ""
-elif [ "$DETECTED_OS" == "Linux" ]; then
-    # Instructions for Linux keychain setup
-    echo "💡 For Linux, 'keychain' helps manage SSH agent persistence."
-    echo "   Ensure 'keychain' is installed (e.g:"
-    case "$DETECTED_PM" in
-        apt)
-            echo "sudo apt install keychain"
-            ;;
-        dnf)
-            echo "sudo dnf install keychain"
-            ;;
-        *)
-            echo "⚠️  Unsupported package manager '$DETECTED_PM' for auto-installing keychain. Please install it manually."
-            ;;
-    esac
-    echo "   Then, add the following lines to your ~/.zshrc (or ~/.bashrc) to load your SSH key automatically:"
-    echo ""
-    echo "     eval \"\$(keychain --eval --quiet $SSH_KEY_PATH)\""
-    echo ""
-    echo "   After adding the line, restart your terminal or 'source ~/.zshrc' (or ~/.bashrc) for changes to take effect."
-    echo ""
-fi
-
-
-echo "📝 Next steps:"
-echo ""
-echo "1️⃣  Add to GitHub:"
+echo "1️⃣  To add it to GitHub:"
 echo "   - Go to: https://github.com/settings/keys"
 echo "   - Click 'New SSH key'"
 echo "   - Title: '$name'"
 echo "   - Key type: 'Authentication Key'"
-echo "   - Paste the key above"
+echo "   - Paste the public key above"
 echo ""
-echo "   Also add to GitLab if you use it:"
+echo "   To add it to GitLab:"
 echo "   - Go to: https://gitlab.com/-/profile/keys"
-echo "   - Paste the key above"
+echo "   - Paste the public key above"
 echo ""
-echo "2️⃣  Test connection:"
+echo "2️⃣  Then, test the SSH connexion!"
+echo "   Paste it in your terminal"
 echo "   ssh -T git@github.com"
 echo "   ssh -T git@gitlab.com"
-echo ""
-echo "3️⃣  Restart your terminal for SSH keys to load automatically."
-echo "    (On macOS, you might need to run 'ssh-add --apple-use-keychain $SSH_KEY_PATH' manually if the key is not auto-added to the keychain.)"
 echo ""

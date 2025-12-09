@@ -10,3 +10,4 @@ Host gitlab.com
 
 Host *
   AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_host_name
