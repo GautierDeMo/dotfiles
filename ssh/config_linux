@@ -1,13 +1,4 @@
-# GitHub configuration
-Host github.com
-  AddKeysToAgent yes
-  IdentityFile ~/.ssh/id_host_name
-
-# GitLab configuration
-Host gitlab.com
-  AddKeysToAgent yes
-  IdentityFile ~/.ssh/id_host_name
-
+# Config for every hosts
 Host *
   AddKeysToAgent yes
-  IdentityFile ~/.ssh/id_host_name
+  IdentityFile ~/.ssh/id_<key_name>

@@ -20,10 +20,11 @@ if [[ ! "$name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
     exit 1
 fi
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" >/dev/null 2>&1 && pwd)"
+DOTFILES_SSH_CONFIG_DIR="$(cd "$SCRIPT_DIR/../ssh" >/dev/null 2>&1 && pwd || printf '%s/../ssh' "$SCRIPT_DIR")"
 SSH_KEY_BASE_NAME="id_$name"
 SSH_KEY_PATH="$SSH_DIR/$SSH_KEY_BASE_NAME"
 TARGET_SSH_CONFIG_FILE="$SSH_DIR/config"
-DOTFILES_SSH_CONFIG_DIR="../ssh"
 
 # Create .ssh directory if it doesn't exist
 mkdir -p "$SSH_DIR"
@@ -79,24 +80,21 @@ if [ -f "$CONFIG_TEMPLATE_PATH" ]; then
                 echo "✅ Existing config file backed up to: $BACKUP_FILE"
             fi
             echo "📝 Overwriting $TARGET_SSH_CONFIG_FILE with new configuration..."
-            sed "s|IdentityFile ~/.ssh/id_host_name|IdentityFile $SSH_KEY_PATH|g" "$CONFIG_TEMPLATE_PATH" > "$TARGET_SSH_CONFIG_FILE"
+            sed "s|IdentityFile ~/.ssh/id_<key_name>|IdentityFile $SSH_KEY_PATH|g" "$CONFIG_TEMPLATE_PATH" > "$TARGET_SSH_CONFIG_FILE"
             chmod 600 "$TARGET_SSH_CONFIG_FILE"
             echo "✅ SSH config file updated: $TARGET_SSH_CONFIG_FILE"
             echo ""
         else
             echo "❌ Skipping update of $TARGET_SSH_CONFIG_FILE. Please integrate the new key manually if needed."
-            echo "Create or update your $TARGET_SSH_CONFIG_FILE with the following entry:"
-            echo "   Host github.com"
-            echo "     AddKeysToAgent yes"
-            echo "     IdentityFile $SSH_KEY_PATH"
-            if [ "$DETECTED_OS" == "Darwin" ]; then
-                echo "     UseKeychain yes"
-            fi
+            echo "Here is the recommended configuration to add to your existing $TARGET_SSH_CONFIG_FILE:"
+            echo "======================================================================"
+            sed "s|IdentityFile ~/.ssh/id_<key_name>|IdentityFile $SSH_KEY_PATH|g" "$CONFIG_TEMPLATE_PATH"
+            echo "======================================================================"
             echo ""
         fi
     else
         echo "📝 Creating $TARGET_SSH_CONFIG_FILE..."
-        sed "s|IdentityFile ~/.ssh/id_host_name|IdentityFile $SSH_KEY_PATH|g" "$CONFIG_TEMPLATE_PATH" > "$TARGET_SSH_CONFIG_FILE"
+        sed "s|IdentityFile ~/.ssh/id_<key_name>|IdentityFile $SSH_KEY_PATH|g" "$CONFIG_TEMPLATE_PATH" > "$TARGET_SSH_CONFIG_FILE"
         chmod 600 "$TARGET_SSH_CONFIG_FILE"
         echo "✅ SSH config file created: $TARGET_SSH_CONFIG_FILE"
         echo ""
@@ -104,12 +102,14 @@ if [ -f "$CONFIG_TEMPLATE_PATH" ]; then
 else
     echo "⚠️ Error: The SSH configuration template file for $DETECTED_OS was not found at: $CONFIG_TEMPLATE_PATH"
     echo "Please manually create or update your ~/.ssh/config with the following entry:"
-    echo "   Host github.com"
+    echo "======================================================================"
+    echo "   Host *"
     echo "     AddKeysToAgent yes"
     echo "     IdentityFile $SSH_KEY_PATH"
-    if [ "$DETECTED_OS" == "Darwin" ]; then
+    if [ "$DETECTED_OS" == "macOS" ]; then
         echo "     UseKeychain yes"
     fi
+    echo "======================================================================"
     echo ""
 fi
 
@@ -123,7 +123,7 @@ cat "$SSH_KEY_PATH.pub"
 echo "======================================================================"
 
 echo ""
-echo "Go add your key to GitHub and GitLab !"
+echo "Go add your key to GitHub, GitLab, or other services!"
 echo ""
 
 echo "1️⃣  To add it to GitHub:"
@@ -140,5 +140,4 @@ echo ""
 echo "2️⃣  Then, test the SSH connexion!"
 echo "   Paste it in your terminal"
 echo "   ssh -T git@github.com"
-echo "   ssh -T git@gitlab.com"
 echo ""
