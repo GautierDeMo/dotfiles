@@ -1,0 +1,5 @@
+# Config for every hosts
+Host *
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_<key_name>
+  UseKeychain yes
